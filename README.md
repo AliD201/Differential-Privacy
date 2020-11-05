@@ -6,8 +6,9 @@ the tool limit the first column and the last to 4 and 70, bin sizes to protect f
 Features:
 - applying laplace differantial privacy with different privacy budget
 - showing MSE cummutativally where it will be added for each generation ( reload to reset)
-- Noisy maximum at the bottom of the histograms 
-available local data sets are:  
+- Noisy maximum at the bottom of the histograms  
+
+Available local data sets are:  
 - ipumsHW2.csv (full dataset)
 - ipumsHW2-test.csv (40 record)
 
