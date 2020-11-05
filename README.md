@@ -1,13 +1,15 @@
 ### Dev note
-A simplified implementation of the k-anonymization algorithm, where it take any csv file with headers and compute the k-anonymization for it.
-with the following settings.  
-- all columns are quasi identifiers except the last
-- last column count as sensitive attribute
-- after computing more than one (k). ILOSS & CDM will be plotted
+A tool to implement Differential privacy 
+due to CORS the tool will work here only for the appended data
+the tool limit the first column and the last to 4 and 70, bin sizes to protect from too many bins :)
 
+Features:
+- applying laplace differantial privacy with different privacy budget
+- showing MSE cummutativally where it will be added for each generation ( reload to reset)
+- Noisy maximum at the bottom of the histograms 
 available local data sets are:  
-- ipums-solution.csv (full dataset)
-- ipums-solution-test.csv (19 record)
+- ipumsHW2.csv (full dataset)
+- ipumsHW2-test.csv (40 record)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

@@ -14,7 +14,7 @@ function App() {
   
   //  K-anonymization/ipumsHW2-test.csv
   // 
-  const [link, setlink] = useState("/ipumsHW2-test.csv");
+  const [link, setlink] = useState("ipumsHW2-test.csv");
   const [E, setE] = useState(0.1);
   const [bins, setbins] = useState(2);
   const [binsSize, setbinsSize] = useState(2);
