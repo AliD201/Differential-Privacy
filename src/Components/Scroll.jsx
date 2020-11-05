@@ -9,9 +9,13 @@ const Scroll = (props) =>{
     direction = "row"
     wrap = "wrap"
   }
-  let myStyle = {overflowY:'scroll', border:'1px solid black', height:'45rem', padding:'1rem', paddingTop:'0', width:"100%",  display: "flex",
+  let myStyle = {
+    overflowY:'scroll', border:'1px solid black', height:'45rem', padding:'1rem',
+     paddingTop:'0', width:"100vw",  display: "flex",
   flexDirection:direction,
-  flexWrap: wrap} 
+  flexWrap: wrap,
+
+} 
   return (
     <div style={myStyle} className=" ma0">
     {props.children}

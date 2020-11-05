@@ -27,7 +27,50 @@
 .App-link {
   color: #61dafb;
 }
-
+.generator label {
+  float: left;
+  clear: left;
+  width: 250px;
+  text-align: left;
+}
+.generator input{
+  float: left;
+  /* margin-left: 10px; */
+}
+.generator div{
+  margin-right: auto;
+    margin-left: auto;
+}
+.generator{
+  display: flex;
+  flex-direction: column;
+  padding-left:25%;
+  padding-right:25%;
+  margin: auto;
+}
+.generator div{
+  display: flex;
+  flex-direction: row;
+}
+.Histograms{
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+justify-content: center;
+margin: auto;
+width: 100%;
+}
+.e{
+width: 80px;
+margin: auto;
+}
+.size{
+  width: 24%;
+  margin-left: 1000000px;
+}
+input[type='radio']{   
+  margin: 5px;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

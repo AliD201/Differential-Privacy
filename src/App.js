@@ -2,42 +2,63 @@ import React,{useState, useEffect} from 'react';
 import './App.css';
 import Papa from 'papaparse';
 
-import EC from './Components/EC'
 import './tables.css'
-
+import HistoTabs from './Components/HistoTabs'
 var mytable = [];
-var ECheaders = [];
 
 function App() {
   const [data, setData] = useState([{}]);
-  // K-anonymization/ipums-solution-test.csv
-  const [link, setlink] = useState("ipums-solution-test.csv");
-  const [k, setk] = useState(2);
+  const [dataHW2, setDataHW2] = useState([{}]);
+  const [sizeOrNUmber,setsizeOrNUmber] = useState(false)
+  const [originalHeaders,setoriginalHeaders] = useState([])
+  
+  //  K-anonymization/ipumsHW2-test.csv
+  // 
+  const [link, setlink] = useState("/ipumsHW2-test.csv");
+  const [E, setE] = useState(0.1);
+  const [bins, setbins] = useState(2);
+  const [binsSize, setbinsSize] = useState(2);
   const [loaded, setloaded] = useState(false);
   const [reGenerate, setreGenerate] = useState(3);
   const [reload, setreload] = useState(false);
 
 // Age Gender Marital Race Status Birth place Language Occupation Income (K) 
 
-  const onkChange = (event)=>{
-    setk( event.target.value);
+ 
+  const   onEChange  = (event)=>{
+    setE( event.target.value);
+    // console.log(event.target.value);
+  }
+  const   onbinsChange  = (event)=>{
+    setbins( event.target.value);
+    // console.log(event.target.value);
+  }
+  const   onbinsSizeChange  = (event)=>{
+    setbinsSize( event.target.value);
     // console.log(event.target.value);
   }
   const onLinkChange = (event)=>{
     setlink( event.target.value);
     // console.log(event.target.value);
   }
+  const onSelectionChange = (event)=>{
+    if ( event.target.value === "size"){
+      setsizeOrNUmber(true)
+    }else{
+      setsizeOrNUmber(false)
+    }
+    console.log(event.target.value);
+  }
   const submitHandler = (event)=>{
     event.preventDefault();
-    if ( k>=2 && k<11){
       if(reGenerate===0){
         setreGenerate(1)    
       }else{
-    setreGenerate(0)
-  }
-  }
+        setreGenerate(0)
+      }
     // console.log("submitted");
   }
+
   const dataSubmitHandler =(event)=>{
     event.preventDefault();
     setreload(!reload)
@@ -47,8 +68,6 @@ function App() {
   }
 
    // Similar to componentDidMount and componentDidUpdate:
-   var ECheader=[]
-
   useEffect(() => {
     
 var rows;
@@ -71,13 +90,7 @@ Papa.parse(link, {
     </tr>
     </thead>
     ]
-    ECheaders=[
-    <thead>
-      <tr>
-        <th className=" pa2">EC</th>
-      {headers}
-      </tr>
-      </thead>]
+    
       //clearing extra empty lines 
       console.log(rows);
       while(rows[rows.length-1].length === 1){
@@ -85,9 +98,9 @@ Papa.parse(link, {
       }
     // rows.pop();
     //deleting headers row 
-    rows.shift()
+     setoriginalHeaders( rows.shift())
     let myrows = []
-    for (let i = 0; i < 19; i++) {
+    for (let i = 0; i < (rows.length>19? 19 : rows.length); i++) {
       let currentrow=[];
       for (let j = 0; j < rows[i].length; j++) {
         currentrow.push(<td className=" pa2">{rows[i][j]}</td>)
@@ -95,7 +108,23 @@ Papa.parse(link, {
       myrows.push(<tr>{currentrow}</tr>)   
     }
   mytable.push(<tbody>{myrows}</tbody>)
+
+
+  let datahw2 = []
+  let datahw2Member = []
+  // col
+  for (let i = 0; i < rows[0].length; i++) {
+    //rows
+    for (let j = 0; j < rows.length; j++) {
+      datahw2Member.push({x:Number(rows[j][i])})
+    }
+    datahw2.push(Array( datahw2Member))
+    datahw2Member = []
+  }
+
     
+  
+    setDataHW2(datahw2)
     setData(rows)
     setloaded(true)
     }
@@ -107,7 +136,7 @@ Papa.parse(link, {
   return (
     <div className="App ">
       <div>
-        <h1>HW1 COE526</h1>
+        <h1>HW2 COE526</h1>
       </div>
       <form onSubmit={dataSubmitHandler}>
       <label className="b"> Link to Load data (csv, with Headers): </label>
@@ -115,34 +144,74 @@ Papa.parse(link, {
       <button > Load </button>
       </form>
       <div className="orange bg-black-90 pa1">
-      <p >Note: This tool assumes that everything is a quasi identifier except the last column which counts as a sensitive atrribute
-        <br/>
-        After trying more than 1 k value some statistics will appear on the stats tab.
-        <br/>
-        The following table only shows a few records from the imported data set
+      <p >Note: This tool is used to apply differntial privacy to a given data,
+        <br></br>
+        with limitation on the first and the last data to be 4 and 70 respectivally in the size 
+        <br></br>
+        That in order to protect your beautiful eyes 
       </p>
       </div>
-      {loaded? 
+      {loaded?
+      <div> 
       <table className="shadow-2 ba center ma2" cellPadding="0" cellSpacing="0">
       {mytable}
 
     </table>
+    </div>
     :
-    <h4>Loading Data..</h4>}
+    <h4>Loading Data..</h4>
+    }
       
       <div className="pa2">
-        <form onSubmit={submitHandler}>
-      <label className="b"> K value: </label>
-      <input className="bg-lightest-blue ba b--green" type="number" min="2" max="10" onChange={onkChange} value={k}></input>
+        <form className="generator" onSubmit={submitHandler}>
+
+      <div>
+      <label className="b"> E(privacy budget) value: </label>
+      <input className="bg-lightest-blue ba b--green e" type="number" step="any" min="0" max="0.1" onChange={onEChange} value={E}></input>
+      </div>
+      <div>
+      <input type="radio" name="sizeOrNumber" value="number" defaultChecked  onChange={onSelectionChange}></input>
+      <label className="b" for="binsNumber"> Number of Bins: </label>
+      <input className="bg-lightest-blue ba b--green e" id="binsNumber" type="number" min="2" max="19" onChange={onbinsChange} value={bins} 
+      disabled = {sizeOrNUmber? "disabled" : ""}
+      style ={{
+        opacity: sizeOrNUmber ? 0.25 : 1,
+      marginLeft: "-23px"}}
+        ></input>
+      </div>
+      <div>
+      <input type="radio" name="sizeOrNumber" value="size"  onChange={onSelectionChange}></input>
+      <label className="b" for="binsSize"> Size of Bins: </label>
+      <input className="bg-lightest-blue ba b--green e" id="binsSize" type="number" min="2" max="400" onChange={onbinsSizeChange} value={binsSize}
+       disabled = {!sizeOrNUmber? "disabled" : ""}
+       style ={{
+        opacity: !sizeOrNUmber ? 0.25 : 1,
+        marginLeft: "-23px"}}
+        ></input>
+      </div>
+      {/* <br></br>      <br></br>
+      <br></br> */}
+      <div >
       <button > Generate </button>
+      </div>
       </form>
       </div>
       <div>
-        <h2>Equivalent Classes</h2>
+        <h2>Private Histogram</h2>
         { reGenerate<3 ? 
-        <EC k={k} rows={data} headers={ECheaders} reGenerate={reGenerate} reload={reload}/>
+        <div>
+          <div className="Histograms">
+          <HistoTabs 
+          privacyBudget ={E}
+          sizeOrNUmber = {sizeOrNUmber} bins={sizeOrNUmber ? [binsSize] : bins}
+           colmns={data[0].length}  data={dataHW2} dataHw2={data} 
+            headers={originalHeaders} reGenerate={reGenerate} reload={reload}/>
+          
+          {/* {histograms} */}
+          </div>
+        </div>
         :
-        <h3>Click Generate to show tables & statistics...</h3>
+        <h3>Click Generate to show Histogram & statistics...</h3>
         }
       </div>
     </div>
@@ -151,10 +220,3 @@ Papa.parse(link, {
 
 export default App;
 
- {/* <thead>
-            <tr>
-              <td>Age</td><td>Gender</td><td>Marital</td><td>Race Status</td>
-              <td>Birth place</td><td>Language</td><td>Occupation</td><td>Income (K)</td>
-              
-            </tr>
-          </thead> */}
